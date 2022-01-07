@@ -12,14 +12,13 @@ use App\Models\patientOperation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-
 use Illuminate\Http\Request;
 
 class PatientOperationController extends Controller
 {
     public function index()
     {  
-         $dep=Departments::all();
+         $dep=Departments::select('department_name','dep_id')->get();
         $patient=Patients::select('patient_id','f_name','l_name','patient_idetify_number')->orderBy('created_at','DESC')->get();
         $operate=patientOperation::
         select('department_name','employees.f_name as emp_f_name','employees.l_name as emp_l_name'
@@ -81,6 +80,7 @@ class PatientOperationController extends Controller
                 $pa->patient_id=$request->patient;
                 $pa->emp_id=$request->docter;
                 $pa->dep_id=$request->department;
+                $pa->referral_person=$request->referral_person;
                 $pa->author=Auth::id();
                 $pa->save();
                 return response()->json(['success'=>'Operation Registered successfully']);
@@ -105,6 +105,7 @@ class PatientOperationController extends Controller
                $pa->patient_id=$request->patient;
                $pa->emp_id=$request->docter;
                $pa->dep_id=$request->department;
+               $pa->referral_person=$request->referral_person;
                $pa->author=Auth::id();
                $pa->save();
                return response()->json(['success'=>'Operation Registered successfully']);
@@ -128,6 +129,7 @@ class PatientOperationController extends Controller
                 $pa->patient_id=$request->patient;
                 $pa->emp_id=$request->docter;
                 $pa->dep_id=$request->department;
+                $pa->referral_person=$request->referral_person;
                 $pa->author=Auth::id();
                 $pa->save();
                 return response()->json(['success'=>'Operation Registered successfully']);
@@ -143,6 +145,107 @@ class PatientOperationController extends Controller
                 'time'=>'required'
             ]);
         }
-                
+    }
+
+    public function edit($id)
+    {
+        $edit=patientOperation::find($id);
+        return response()->json($edit);
+    }
+
+    public function update(Request $request){
+        if($request->type=="surgery"){
+            $valid=$request->validate([
+                'patient'=>'required',
+                'type'=>'required',
+                'department'=>'required',
+                'docter'=>'required',
+                'surgery'=>'required',
+                'date'=>'required',
+                'time'=>'required'
+            ]);
+               if($valid){
+                $pa=patientOperation::find($request->surg_id);
+                $pa->type=$request->type;
+                $pa->surgery_id=$request->surgery;
+                $pa->date=$request->date;
+                $pa->time=$request->time;
+                $pa->patient_id=$request->patient;
+                $pa->emp_id=$request->docter;
+                $pa->dep_id=$request->department;
+                $pa->referral_person=$request->referral_person;
+                $pa->procedure_id=null;
+                $pa->save();
+                return response()->json(['success'=>'Operation updated successfully']);
+               } 
+        }
+        if($request->type=="procedure"){
+            $valid=$request->validate([
+                'patient'=>'required',
+                'type'=>'required',
+                'department'=>'required',
+                'docter'=>'required',
+                'procedure'=>'required',
+                'date'=>'required',
+                'time'=>'required'
+            ]);
+               if($valid){
+                $pa=patientOperation::find($request->surg_id);
+                $pa->type=$request->type;
+               $pa->procedure_id=$request->procedure;
+               $pa->date=$request->date;
+               $pa->time=$request->time;
+               $pa->patient_id=$request->patient;
+               $pa->emp_id=$request->docter;
+               $pa->dep_id=$request->department;
+               $pa->referral_person=$request->referral_person;
+               $pa->surgery_id=null;
+               $pa->save();
+               return response()->json(['success'=>'Operation updated successfully']);
+
+               } 
+        }
+        if($request->type=="normal delivery"){
+            $valid=$request->validate([
+                'patient'=>'required',
+                'type'=>'required',
+                'department'=>'required',
+                'docter'=>'required',
+                'date'=>'required',
+                'time'=>'required'
+            ]);
+               if($valid){
+                $pa=patientOperation::find($request->surg_id);
+                $pa->type=$request->type;
+                $pa->date=$request->date;
+                $pa->time=$request->time;
+                $pa->patient_id=$request->patient;
+                $pa->emp_id=$request->docter;
+                $pa->dep_id=$request->department;
+                $pa->referral_person=$request->referral_person;
+                $pa->surgery_id=null;
+                $pa->procedure_id=null;
+                $pa->save();
+                return response()->json(['success'=>'Operation updated successfully']);
+               } 
+        }
+        if(empty($request->type)){
+            $valid=$request->validate([
+                'patient'=>'required',
+                'type'=>'required',
+                'department'=>'required',
+                'docter'=>'required',
+                'date'=>'required',
+                'time'=>'required'
+            ]);
+        }
+    }
+
+
+    public function destroy($id)
+    {
+        patientOperation::find($id)->delete();
+        return response()->json(['success'=>'Operation deleted successfully']);
+
     }
 }

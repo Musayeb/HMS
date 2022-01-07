@@ -19,8 +19,6 @@ class CreatePatientTestTable extends Migration
             $table->foreign('test_id')->references('test_id')->on('tests');
             $table->Biginteger('dep_id')->unsigned();
             $table->foreign('dep_id')->references('dep_id')->on('departments');
-            $table->Biginteger('emp_id')->unsigned();
-            $table->foreign('emp_id')->references('emp_id')->on('employees');
             $table->Biginteger('opd_id')->unsigned();
             $table->foreign('opd_id')->references('opd_id')->on('opds');
             $table->Biginteger('fees');

@@ -140,9 +140,19 @@
                                 placeholder="Date of Birth..">
                             {!! $errors->first('date_of_join', '<small class="text-danger">:message</small>') !!}
                         </div>
-
+                  
                     </div>{{-- end of col --}}
                     <div class="col-md-4">
+                        <div class="form-group">
+                            <label >End of Contract <label class="text-danger">*</label></label>
+                            <input type="Date" class="form-control" value="{{ old('end_of_contract') }}"
+                                name="end_of_contract" @if ($errors->first('end_of_contract')) style="border:1px solid red" @endif>
+                            {!! $errors->first('end_of_contract', '<small class="text-danger">:message</small>') !!}
+                        </div>
+                        <div class="form-group">
+                            <label>TIN Number</label>
+                            <input type="text" class="form-control" value="{{ old('tin_number') }}"name="tin_number" placeholder="TIN Number">
+                        </div>
                         <div class="form-group">
                             <label >Emergency Contact <label class="text-danger">*</label></label>
                             <input type="phone" value="{{ old('emergency_contact') }}" class="form-control phone" @if ($errors->first('emergency_contact')) style="border:1px solid red" @endif
@@ -197,15 +207,13 @@
     <script>
         $('.dropify').dropify({
             messages: {
-                'default': 'Drag and drop a file here or click',
-                'replace': 'Drag and drop or click to replace',
-                'remove': 'Remove',
-                'error': 'Ooops, something wrong appended.'
+            'default': '',
+            'error':   'Ooops, something wrong happended.'
             },
             error: {
                 'fileSize': 'The file size is too big (2M max).'
             },
-            height:96,
+            height:51,
         });
             
         $(document).ready(function() {

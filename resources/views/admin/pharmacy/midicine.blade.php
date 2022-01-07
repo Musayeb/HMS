@@ -9,10 +9,12 @@
 @section('content')
     <div class="card p-3">
         <div class="btn-list ">
-            <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
-                class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Medicine</a>
+            @if (!empty(Helper::getpermission('_medicines--create')) )
+                <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
+                    class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Medicine</a>
+            @endif
         </div>
-        <div class="mt-5 tables">
+        <div class="mt-5 table-responsive">
             <table class="table table-striped table-bordered table-sm text-nowrap w-100 dataTable no-footer" id="example">
                 <thead>
                     <tr>
@@ -26,7 +28,9 @@
                         <th>Expiry Date</th>
                         <th>Avaliable Qty</th>
                         <th>Created Date</th>
-                        <th>Action</th>
+                        @if (!empty(Helper::getpermission('_medicines--edit')) ||  !empty(Helper::getpermission('_medicines--delete')))
+                            <th>Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -58,10 +62,17 @@
                             </td>
     
                             <td>{{ $row->created_at }}</td>
-                            <td>
-                                <a data-delete="{{$row->ph_main_cat_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
-                                <a data-company="{{$row->company}}" data-medicine="{{$row->medicine_name}}" data-catagory="{{$row->ph_main_cat_id}}"  data-id="{{$row->midi_id}}"  data-toggle="modal" data-target="#editdept" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
-                            </td>
+
+                            @if (!empty(Helper::getpermission('_medicines--edit')) ||  !empty(Helper::getpermission('_medicines--delete')))
+                                <td>
+                                    @if (!empty(Helper::getpermission('_medicines--delete')))
+                                        <a data-delete="{{$row->ph_main_cat_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
+                                    @endif
+                                    @if (!empty(Helper::getpermission('_medicines--edit')) )
+                                        <a data-company="{{$row->company}}" data-medicine="{{$row->medicine_name}}" data-catagory="{{$row->ph_main_cat_id}}"  data-id="{{$row->midi_id}}"  data-toggle="modal" data-target="#editdept" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
+                                    @endif
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
 

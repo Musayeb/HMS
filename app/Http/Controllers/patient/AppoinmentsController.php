@@ -117,4 +117,70 @@ class AppoinmentsController extends Controller
         $app=Appoinments::find($id)->delete();
 
     }
+
+    public function show($id)
+    {
+        $app=Appoinments::
+        select('users.email','departments.*','employees.f_name','employees.l_name','appoinments.*')->
+        join('employees','employees.emp_id','appoinments.emp_id')
+        ->join('departments','departments.dep_id','appoinments.dep_id')
+        ->join('users','users.id','appoinments.author')
+        ->where('app_id',$id)
+        ->get();
+        $app=$app[0];
+
+        
+        $show='<div style="display:flex;margin-top: 20px">
+        <div style="width:40%;text-align: left">
+            <div class="form-group ">
+                <label>Date #: <strong id="bill_no1">'.$app->date.'</strong></label>
+            </div>
+        </div>
+        <div style="width:40%;text-align: center">
+        <div class="form-group ">
+            <label>Appoinment No #: <strong id="bill_no1">APP-N-'.$app->app_number.'</strong></label>
+        </div>
+    </div>
+        <div style="width: 40%;text-align:right">
+            <div class="form-group float-right">
+                <label>Time: <strong id="bill_date1">'.$app->time.'</strong></label>
+            </div>
+        </div>
+    </div>
+    <div class="row p-4 table-sm table " style="margin-top: 20px">
+        <table class="printablea4" cellspacing="0" cellpadding="0" width="100%">
+            <tbody>
+                <tr>
+                    <th>Docter Name:</th>
+                    <td ><small>'.$app->f_name . ' ' . $app->l_name.'</small></td>
+                    <th>Patient Name:</th>
+                    <td ><small>'.$app->p_f_name.' '.$app->p_l_name.'</small></td>
+                    <th >Department</th>
+                    <td ><small>'.$app->department_name.'</small></td>                                                                
+                </tr>
+                <tr>
+                    <th>Age:</th>
+                    <td ><small >'.$app->age.'</small></td>   
+                    <th>Phone:</th>
+                    <td ><small >'.$app->phone.'</small></td>   
+                                
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class=" p-4" style="margin-top:20px">
+        <div style="display:flex">
+        <table class="printablea4 table" id="testreport" style="width:70%">
+            <tbody>
+                <tr>
+                    <th >Issue By</th>
+                    <td id="by">'.$app->email.'</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>';
+        return response()->json($show);
+    }
 }

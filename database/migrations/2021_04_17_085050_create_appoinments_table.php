@@ -29,6 +29,7 @@ class CreateAppoinmentsTable extends Migration
             $table->string('app_number');
             $table->Biginteger('author')->unsigned();
             $table->foreign('author')->references('id')->on('users');
+            $table->string('referral_person')->nullable();    
             $table->timestamps();
         });
     }

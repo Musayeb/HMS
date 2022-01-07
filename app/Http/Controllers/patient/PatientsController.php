@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers\patient;
 use App\Http\Controllers\Controller;
+use App\Models\AdmissionBill;
 use Illuminate\Http\Request;
 use App\Models\Patients;
 use App\Models\Departments;
+use App\Models\FinanceLog;
+use App\Models\LabBill;
+use App\Models\pharmaBill;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 class PatientsController extends Controller
 {
     public function index()
     {   
-        $patients=Patients::join('departments','departments.dep_id','patients.dep_id')->groupBy('patients.patient_id')->get();
+    
+        $patients=Patients::join('departments','departments.dep_id','patients.dep_id')
+        ->groupBy('patients.patient_id')
+        ->get();
         return view('admin.patients.patients',compact('patients'));
     }
     public function create(){
@@ -55,6 +62,7 @@ class PatientsController extends Controller
                $patient->occupation=$request->occupation;
                $patient->marital_status=$request->marital_status;
                $patient->allergies=$request->marital_status;
+               $patient->referral_person=$request->referral_person;
                $patient->save();       
             }
             session()->flash('notif','Patient Registred Successfully');
@@ -101,6 +109,7 @@ class PatientsController extends Controller
                 $patient->occupation=$request->occupation;
                 $patient->marital_status=$request->marital_status;
                 $patient->allergies=$request->marital_status;
+                $patient->referral_person=$request->referral_person;
                 $patient->save();      
                 session()->flash('notif','Patient updated successfully');
                 return redirect('/patients');
@@ -110,8 +119,54 @@ class PatientsController extends Controller
 
     public function show($id)
     {
-        $patient=Patients::find($id)->join('departments','departments.dep_id','patients.dep_id')->groupBy('patients.patient_id')->get();
-        return view('admin.patients.patient_show',compact('patient'));
+      
+      
+
+        $ph=pharmaBill::select('bill_id')->where('patient_id',$id)->get();
+        if(!$ph->isEmpty()){
+       
+        foreach ($ph as $row) {
+            $ph_id[]=$row->bill_id;
+        }
+        foreach ($ph_id as $value) {
+            $phlog[]=FinanceLog::where('bill_id',$value)->where('payment_type','Pharmacy bill payment')->get();
+        }
+          $finance=array_merge($phlog);
+
+       }
+// lab
+        $lab=LabBill::select('bill_id')->where('patient_id',$id)->get();
+       if(!$lab->isEmpty()){
+        foreach ($lab as $rows) {
+            $lab_id[]=$rows->bill_id;
+        }
+        foreach ($lab_id as $values) {
+            $lablog[]=FinanceLog::where('bill_id',$values)->where('payment_type','Laboratory bill payment')->get();
+        }
+        $finance=array_merge($phlog,$lablog);
+
+    }
+
+// end lab
+        $ad=AdmissionBill::select('admission_id')->where('patient_id',$id)->get();
+       if(!$ad->isEmpty()){
+        foreach ($ad as $rowss) {
+            $ad_id[]=$rowss->admission_id;
+        }
+        foreach ($ad_id as $valuess) {
+            $adlog[]=FinanceLog::where('bill_id',$valuess)->where('payment_type','Admission bill payment')->get();
+        }
+        $finance=array_merge($phlog,$lablog,$adlog);
+
+    }
+    
+// dd($finance[0]);
+
+        $emp=Patients::find($id)
+        ->join('departments','departments.dep_id','patients.dep_id')
+        ->groupBy('patients.patient_id')->get();
+        $emp=$emp[0];
+        return view('admin.patients.patient_show',compact('emp','finance'));
 
     }
 

@@ -9,8 +9,10 @@
 @section('content')
     <div class="card p-3">
         <div class="btn-list ">
-            <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
-                class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Surgery</a>
+            @if (!empty(Helper::getpermission('_surgery--create')))
+                <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
+                    class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Surgery</a>
+            @endif
         </div>
         <div class="mt-5 tables">
             <table class="table table-striped table-bordered table-sm text-nowrap w-100 dataTable no-footer" id="example">
@@ -21,7 +23,9 @@
                         <th>Departement</th>
                         <th>Author</th>
                         <th>Created Date</th>
-                        <th>Action</th>
+                        @if (!empty(Helper::getpermission('_surgery--delete')) || !empty(Helper::getpermission('_surgery--edit')))
+                            <th>Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -34,8 +38,14 @@
                             <td>{{ $row->email }}</td>
                             <td>{{ $row->created_at }}</td>
                             <td>
-                                <a data-delete="{{$row->surgery_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
-                                <a data-dep="{{$row->dep_id}}" data-surg="{{$row->surgery_name}}" data-toggle="modal" data-target="#editdept" data-id="{{$row->surgery_id}}" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
+                                @if (!empty(Helper::getpermission('_surgery--delete')) || !empty(Helper::getpermission('_surgery--edit')))
+                                    @if (!empty(Helper::getpermission('_surgery--delete')))
+                                        <a data-delete="{{$row->surgery_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
+                                    @endif
+                                    @if (!empty(Helper::getpermission('_surgery--edit')))
+                                        <a data-dep="{{$row->dep_id}}" data-surg="{{$row->surgery_name}}" data-toggle="modal" data-target="#editdept" data-id="{{$row->surgery_id}}" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
+                                    @endif
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -114,7 +124,6 @@
                             <label>Surgery Name</label>
                            <input type="text" name="surgery_name" class="form-control" id="surgery_name"  placeholder="Surgery Name">
                            <input type="hidden" name="surg_id" id="surg_id">
-
                         </div>
                         <div class="modal-footer">
                            <button type="submit" class="btn btn-primary">Edit Surgery</button>

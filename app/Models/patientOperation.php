@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class patientOperation extends Model
 {
     use HasFactory;
+    protected $primaryKey="patient_s_del_pro_id";
 }

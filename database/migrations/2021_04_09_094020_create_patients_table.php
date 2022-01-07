@@ -35,7 +35,8 @@ class CreatePatientsTable extends Migration
             $table->text('remark')->nullable();
             $table->string('occupation');
             $table->string('marital_status');
-            $table->text('allergies')->nullable();           
+            $table->text('allergies')->nullable();  
+            $table->string('referral_person')->nullable();     
             $table->timestamps();
         });
     }

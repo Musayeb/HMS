@@ -140,6 +140,12 @@
                                 <textarea name="remark"  cols="44" rows="1"  placeholder="Remark.."
                                     class="form-control">{{$patient->remark}}</textarea>
                             </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Referral Person <label class="text-danger">*</label></label>
+                                <input type="text" class="form-control" value="{{$patient->referral_person}}" name="referral_person"  placeholder="Referral person.." value="{{old('referral_person')}}">
+                            </div>
+
                         </div>{{-- end of col --}}
 
                     </div>{{-- end of row --}}

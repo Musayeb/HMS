@@ -19,7 +19,7 @@ class CreateSurgeriesTable extends Migration
             $table->Biginteger('dep_id')->unsigned();
             $table->foreign('dep_id')->references('dep_id')->on('departments');
             $table->Biginteger('author')->unsigned();
-            $table->foreign('author')->references('id')->on('users');
+            $table->foreign('author')->references('id')->on('users');   
             $table->timestamps();
         });
     }

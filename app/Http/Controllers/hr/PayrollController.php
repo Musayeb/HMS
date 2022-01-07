@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\hr;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\FinanceLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Payroll;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class PayrollController extends Controller
 {
@@ -18,6 +19,7 @@ class PayrollController extends Controller
          ->join('employees','employees.emp_id','payrolls.emp_id')
         ->join('users','users.id','payrolls.author')
         ->groupBy('payrolls.pay_id')
+        ->orderBy('created_at','DESC')
         ->get();
         return view('admin.payroll.payroll',compact('emp','pay'));
     }
@@ -33,6 +35,7 @@ class PayrollController extends Controller
         $check=DB::table('payrolls')->where('emp_id',$request->employee)->where('month_year',$request->month)->get();
        
     if(empty($check[0]->pay_id)){
+       
         $pay= new Payroll;
         $pay->author=Auth::id();
         $pay->emp_id=$request->employee;
@@ -44,6 +47,16 @@ class PayrollController extends Controller
         $pay->month_year=$request->month;
         $pay->status='Pending';
         $pay->save();
+
+        $fin= new FinanceLog();
+        $fin->payment_type="Payroll paid to employee";
+        $fin->bill_id=$pay->id;
+        $fin->total=$request->net_salary;
+        $fin->status="Pending";
+        $fin->type="Expense";
+        $fin->author=Auth::id();
+        $fin->save();
+
         return response()->json(['notif'=>'Payroll successfully paid']);
 
     }else{

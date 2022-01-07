@@ -25,6 +25,7 @@
                         <th>Department</th>
                         <th>Docter</th>
                         <th>Author</th>
+                        <th>Referral Person</th>
                         <th>Register Date</th>
                         <th>Action</th>
                     </tr>
@@ -42,13 +43,14 @@
                             <td>{{ $row->f_name . ' ' . $row->l_name }}</td>
                             
                             <td>{{ $row->email }}</td>
+                            <td>{{ $row->referral_person }}</td>
                             <td>{{ $row->created_at }}</td>
 
                             <td>
-                                <a data-delete="{{ $row->app_id }}"
+                                <a data-delete="{{ $row->opd_id }}"
                                     class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
 
-                                <a data-toggle="modal" data-target="#edit" data-id="{{ $row->app_id }}"
+                                <a data-toggle="modal" data-target="#edit" data-id="{{ $row->opd_id }}"
                                     class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
                                     <a 
                                         class="btn btn-primary btn-sm text-white mr-2 print"  
@@ -131,6 +133,10 @@
                             </select>
                         </div>
                 
+                        <div class="form-group">
+                            <label class="form-label">Referral Person</label>
+                            <input type="text" class="form-control" name="referral_person"  placeholder="Referral person..">
+                        </div>
 
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Create OPD</button>
@@ -257,51 +263,52 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content ">
                 <div class="modal-header pd-x-20">
-                    <h6 class="modal-title">Add Appoinments</h6>
+                    <h6 class="modal-title">Edit OPD</h6>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body pd-20">
-                    <div class="alert alert1 alert-danger">
+                    <div class="alert alert3 alert-danger">
                         <ul id="error"></ul>
                     </div>
 
-                    <form method="post" id="editform">
+                    <form method="post" id="updateForm">
                         <div class="form-group">
                             <label>Patient FirstName</label>
-                            <input name="first_name" type="text" class="form-control" placeholder="First Name"
-                                id="first_name">
-                                <input type="hidden" id="app_id_id" name="app_id">
+                            <input name="first_name" type="text" class="form-control" placeholder="First Name" id="first_name1" >
+                            <input type="hidden" id="opd_id" name="opd_id">
                         </div>
 
                         <div class="form-group">
                             <label>Patient LastName</label>
-                            <input name="last_name" type="text" class="form-control" placeholder="Last Name" id="last_name">
+                            <input name="last_name" type="text" class="form-control"  placeholder="Last Name" id="last_name1" >
                         </div>
                         <div class="form-group">
                             <label>Age</label>
-                            <input name="age" type="text" class="form-control age" placeholder="Age" id="age">
+                            <input name="age" type="text" class="form-control age"placeholder="Age" id="age1" >
                         </div>
                         <div class="form-group">
                             <label>Phone Number</label>
-                            <input name="phone" type="text" class="form-control phone" placeholder="Phone number">
+                            <input name="phone" type="text" class="form-control phone" placeholder="Phone number"  id="phone_number1">
                         </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select name="gender" class="form-control" id="gender1">
+                                <option value="" selected >select gender</option>
+                                <option >Male</option>
+                                <option >Female</option>
+                                <option > Rather not say</option>
+                            </select>
+                        </div>
+                        
                         <div class="form-group">
                             <label>Date</label>
-                            <input name="date" type="date" class="form-control" placeholder="Date" id="date">
+                            <input name="date" type="date" class="form-control "  placeholder="Date"  id="date1">
                         </div>
-                        <div class="form-group">
-                            <label>Time</label>
-                            <input name="time" type="text" class="basicExample time ui-timepicker-input form-control"
-                                placeholder="Time" autocomplete="off" >
-
-                            <option>
-                        </div>
-
                         <div class="form-group">
                             <label>Departments</label>
-                            <select name="department" class="form-control deps">
+                            <select name="department" class="form-control deps" id="department1">
                                 <option value="" disabled selected>Select Department</option>
                                 @foreach ($dep as $row)
                                     <option value="{{ $row->dep_id }}">{{ $row->department_name }}</option>
@@ -310,13 +317,18 @@
                         </div>
                         <div class="form-group">
                             <label>Docter</label>
-                            <select name="docters"  class="form-control pos">
+                            <select name="docter"  class="form-control pos" id="docter1">
                                 <option value="" selected disabled>Select Docter</option>
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label class="form-label">Referral Person </label>
+                            <input type="text" class="form-control" name="referral_per"  placeholder="Referral person"  id="referral_person">
+                        </div>
+
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Create Appoinment</button>
+                            <button type="submit" class="btn btn-primary">Edit OPD</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -398,6 +410,9 @@
     <script src="{{ asset('public/assets/plugins/notify/js/jquery.growl.js') }}"></script>
     <script src="{{ asset('public/assets/plugins/sweetalert2/dist/sweetalert2.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+    <script>
+        var emp="";
+    </script>
 
     <script>
         $('body').on('click','.print',function() {
@@ -538,6 +553,9 @@
                                 .l_name + '</option>';
                             $(".pos").html(Hdata);
                         }
+                        if(emp != ""){
+                            $(".pos").val(emp).trigger('change');
+                        }
                     } else {
                         $(".pos").html(
                             '<option value="" selected disabled>No Record Found</option>');
@@ -547,10 +565,103 @@
             })
 
         });
+
+        $('body').on('click','.edit',function() {
+            $.ajax({
+                type: 'get',
+                url: '{{ url("opd") }}/'+$(this).attr('data-id')+'/'+'edit',
+                success: function(data) {
+                        $('#first_name1').val(data.o_f_name);
+                        $('#last_name1').val(data.o_l_name);
+                        $('#age1').val(data.age);
+                        $('#phone_number1').val(data.phone);
+                        $('#date1').val(data.date);
+                        $('#gender1').val(data.gender);
+                        $('#department1').val(data.dep_id).trigger('change');
+                        $('#opd_id').val(data.opd_id);
+                        $('#referral_person').val(data.referral_person);
+                        console.log(data.referral_person);
+
+                        if(data.emp_id != ""){
+                            emp=data.emp_id;
+                        }
+                },
+                error: function() {}
+            })
+
+        });
+        $("#updateForm").submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajaxSetup({headers: {'X-CSRF-TOKEN': '@php echo csrf_token() @endphp ' }});
+            $.ajax({
+                url: '{{ url("opd_update") }}',
+                type: 'post',
+                data: formData,
+                success: function(data) {
+                    $(".alert").css('display', 'none');
+                    $('.table').load(document.URL + ' .table');
+                    $('#edit').modal('hide');
+                    $('#updateForm')[0].reset();
+                    return $.growl.notice({
+                        message: data.success,
+                        title: 'Success !',
+                    });
+                },
+                error: function(data) {
+                    $(".alert3").css('display', 'block');
+
+                    $.each(data.responseJSON.errors, function(key, value) {
+                        $(".alert").find("ul").append('<li>' + value + '</li>');
+                    });
+                    $('.modal').animate({
+                        scrollTop: 0
+                    }, '500');
+
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
+
+
+$('body').on('click','.delete',function(){  
+var id=$(this).attr('data-delete');
+        Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+              if (result.value) {
+                $.ajaxSetup({headers: {'X-CSRF-TOKEN': '@php echo csrf_token() @endphp ' }});
+            $.ajax({
+                    type:'DELETE',
+                    url:'{{url("opd")}}/'+id,
+                    success:function(data){ 
+                    Swal.fire(
+                      'Deleted!',
+                      'Your recorde has been deleted.',
+                      'success'
+                    )
+                    $('#row'+id).hide(1500);
+                    },
+                    error:function(error){
+                    Swal.fire(
+                      'Faild!',
+                      'Opd record has related data first delete related data',
+                      'error'
+                    )
+                    }
+                });
+            }
+          })
+              
+});
     </script>
-    <script>
-
-
-
-    </script>
+  
 @endsection

@@ -164,7 +164,7 @@
                                 <div class="col-md-5 col-sm-6">
                                     <div class="staffprofile">
                                         <h5>Total Net Salary Paid</h5>
-                                        <h4>$45000.00</h4> 
+                                        <h4>{{$sum}}</h4> 
                                         <div class="icon mt12font40">
                                             <i class="fa fa-money"></i>
                                         </div>
@@ -181,53 +181,40 @@
                                 </div>
                             </div>
                             <div class="table-responsive around10 pt0">
-                                <table class="table table-hover table-sm table-bordered table-striped tmb0">
+                                <table class="table table-hover table-sm table-bordered  tmb0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tax %</th>
+                                            <th>Tax</th>
+                                            <th>Net Salary</th>
+                                            <th>Deduction</th>
+                                            <th>Deduction Description</th>
+                                            <th>Year & Month</th>
+                                            <th>Issue Date</th>
+                               
+                                       </tr>
+                                    </thead>
                                     <tbody>
+                                        @php $counter=1; @endphp
+                                        @foreach ($pay as $row)
                                         <tr>
-                                            <td>Phone</td>
-                                            <td>6545645645</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Emergency Contact Number</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Email</td>
-                                            <td>superadmin@gmail.com</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Gender</td>
-                                            <td>Male</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Blood Group</td>
-                                            <td>B+</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Date of Birth</td>
-                                            <td>21/07/1977</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Marital Status</td>
-                                            <td>Married</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-md-4">Father Name</td>
-                                            <td class="col-md-5">leonard</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Mother Name</td>
-                                            <td>masenge</td>
-                                        </tr>
-
+                                            <td>{{$counter++}}</td>
+                                            <td>{{$row->tax_precentage.'%'}}</td>
+                                            <td>{{$row->tax_amount}}</td>
+                                            <td>{{$row->net_salary}}</td>
+                                            <td>@if(empty($row->deduction)){{'N/A'}} @else{{$row->deduction}} @endif</td>
+                                            <td>@if(empty($row->deduction_description)) {{'N/A'}} @else {{$row->deduction_description}} @endif</td>
+                                            <td>{{$row->month_year}}</td>
+                                            <td>{{$row->created_at}}</td>
                                       
-                                        <tr>
-                                            <td>Note</td>
-                                            <td>Founder</td>
-                                        </tr>
-
+                                        
+                                        </tr>     
+                                        @endforeach
+                                       
                                     </tbody>
                                 </table>
+                                {{$pay->links()}}
                             </div> 
                         </div>
                         <div class="tab-pane" id="tab-81">
@@ -236,27 +223,25 @@
                                 <div class="col-md-5 col-sm-6">
                                     <div class="staffprofile">
                                         <h5>CV</h5>
+                                        @if(!empty($emp->contract_file))
                                         <a href="{{url('employees/doc/download')}}/{{$emp->emp_id}}/cv_file" class="btn btn-default btn-xs" data-toggle="tooltip" title="Download">
                                             <i class="fa fa-download"></i></a>
-                                        <a href="https://demo.smart-hospital.in/admin/staff/doc_delete/1/1/resume1.doc" class="btn btn-default btn-xs" data-toggle="tooltip" title="Delete" onclick="return confirm('Delete Confirm?');">
-                                            <i class="fa fa-remove"></i></a>
-                                        <div class="icon">
-                                            <i class="fa fa-file-text-o"></i>
-                                        </div>
+                                        @else Empty
+                                        @endif
+
                                     </div>
                                 </div><!--./col-md-3-->
                                                                      
                                 <div class="col-md-5 col-sm-6">
                                     <div class="staffprofile">
                                         <h5>Contract </h5>
+                                        @if(!empty($emp->cv_file))
                                         <a href="{{url('employees/doc/download')}}/{{$emp->emp_id}}/contract_file" class="btn btn-default btn-xs" data-toggle="tooltip" title="Download">
                                             <i class="fa fa-download"></i></a>
-                                        <a href="https://demo.smart-hospital.in/admin/staff/doc_delete/1/2/joining_letter1.doc" class="btn btn-default btn-xs" data-toggle="tooltip" title="Delete" onclick="return confirm('Delete Confirm?');">
-                                            <i class="fa fa-remove"></i>
                                         </a> 
-                                        <div class="icon">
-                                            <i class="fa fa-file-archive-o"></i>
-                                        </div>
+                                        @else Empty
+                                        @endif
+
                                     </div>
                                 </div><!--./col-md-3-->
                       
@@ -269,5 +254,8 @@
     </div><!-- COL-END -->
 </div>
 </div>
-
+@endsection
+@section('directory')
+    <li class="breadcrumb-item active" aria-current="page"><a href="{{ url('employees') }}">Employees</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Profile</li>
 @endsection

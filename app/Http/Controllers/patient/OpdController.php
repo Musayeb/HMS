@@ -6,12 +6,12 @@ use App\Models\Departments;
 use Illuminate\Http\Request;
 use App\Models\Appoinments;
 use App\Models\Employee;
+use App\Models\FinanceLog;
 use App\Models\Test;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Opd;
-use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 class OpdController extends Controller
 {
     public function index()
@@ -19,6 +19,7 @@ class OpdController extends Controller
         $dep=Departments::all();
         $opd=Opd::join('employees','employees.emp_id','opds.emp_id')
              ->join('departments','departments.dep_id','opds.dep_id')
+             ->orderBy('opds.created_at','DESC')
              ->get();
         
        return view('admin.patients.opd.index',compact('dep','opd'));
@@ -70,6 +71,7 @@ class OpdController extends Controller
       $opd->gender=$request->gender;
       $opd->phone=$request->phone;
       $opd->author=Auth::id();
+      $opd->referral_person=$request->referral_person;
       $opd->save();
 
       return response()->json(['success'=>"OPD Patient Created Successfully !"]);   								
@@ -88,11 +90,31 @@ class OpdController extends Controller
       ->join('users','visit.author','users.id')
       ->where('opd_id',$id)->orderBy('date','DESC')->get();
 
-      $finance=DB::table('finance')
-      ->select('*','finance.created_at as date')
-      ->join('departments','departments.dep_id','finance.dep_id')
-      ->join('users','finance.author','users.id')
-      ->where('patient_id',$id)->orderBy('finance.created_at','Desc')->get();
+      $patient=DB::table('patient_test')->select('patient_test_id')
+      ->where('opd_id',$id)
+      ->get();
+      $vist=DB::table('visit')->select('visit_id')
+      ->where('opd_id',$id)
+      ->get();
+      
+      foreach ($patient as $row) {
+        $patient=DB::table('finance_logs')
+        ->where('bill_id',$row->patient_test_id)
+        ->where('payment_type','OPD patient test payement')
+        ->get();
+      }
+      foreach ($vist as $rows) {
+        $v=DB::table('finance_logs')
+        ->where('bill_id',$rows->visit_id)
+        ->where('payment_type','OPD patient revisit payement')
+        ->get();
+
+      }
+
+      $finance=$v->toBase()->merge($patient->toBase());
+
+
+
       
       $test=DB::table('patient_test')
       ->select('*','patient_test.created_at as date')
@@ -102,6 +124,46 @@ class OpdController extends Controller
       ->where('opd_id',$id)->orderBy('patient_test.created_at','Desc')->get();
 
       return view('admin.patients.opd.show',compact('opd','dep','id','visit','finance','test'));
+    }
+
+    public function edit($id)
+    {
+      $data=Opd::find($id);
+      return response()->json($data);
+    }
+
+    public function update(Request $request)
+    {
+      $datavalidate=$request->validate([
+        'first_name'=>'required',
+        'last_name'=>'required',
+        'phone'=>'required',
+        'age'=>'required',
+        'date'=>'required',
+        'department'=>'required',
+        'docter'=>'required',
+        'gender'=>'required',
+      ]);
+        if($datavalidate){
+          $opd=Opd::find($request->opd_id);
+          $opd->o_f_name=$request->first_name;
+          $opd->o_l_name=$request->last_name;
+          $opd->age=$request->age;
+          $opd->dep_id=$request->department;
+          $opd->emp_id=$request->docter;
+          $opd->date=$request->date;
+          $opd->gender=$request->gender;
+          $opd->phone=$request->phone;
+          $opd->referral_person=$request->referral_per;
+          $opd->save();
+          return response()->json(['success'=>"OPD patient record updated successfully !"]);
+        }
+
+    }
+
+    public function destroy($id)
+    {
+      Opd::find($id)->delete();
     }
     public function revisitcreate(Request $request)
     {
@@ -121,17 +183,16 @@ class OpdController extends Controller
           'author'=>Auth::id(),   
           'created_at'=>date("Y-m-d h:i:s"),    
         ]);
-      
-        DB::table('finance')->insert([
-          'dep_id'=>$request->department,
-          'patient_id'=>$request->opd_id,
-          'fees'=>$request->docter_fess,
-          'relate_id'=>$visit,
-          'status'=>"Paid",      
-          'type_charges'=>'OPD',
-          'author'=>Auth::id(),   
-          'created_at'=>date("Y-m-d h:i:s"),   
-        ]);
+
+        $id=DB::getPdo()->lastinsertid();
+        $fin= new FinanceLog();
+        $fin->payment_type="OPD patient revisit payement";
+        $fin->bill_id=$id;
+        $fin->total=$request->docter_fess;    
+        $fin->status="Paid";
+        $fin->author=Auth::id();
+        $fin->save();
+        
       return response()->json(['success'=>"OPD Patient Revisited  Successfully !"]);   								
       }
     }
@@ -143,7 +204,7 @@ class OpdController extends Controller
         'test_fees'=>'required',
       ]);
       if($datavalidate==true){
-         $test=DB::table('patient_test')->insertGetId([
+         $test=DB::table('patient_test')->insert([
           'dep_id'=>$request->department,
           'opd_id'=>$request->opd_id,
           'test_id'=>$request->test_type,
@@ -153,16 +214,17 @@ class OpdController extends Controller
           'author'=>Auth::id(),   
           'created_at'=>date("Y-m-d h:i:s"),    
         ]);
-        DB::table('finance')->insert([
-          'dep_id'=>$request->department,
-          'patient_id'=>$request->opd_id,
-          'fees'=>$request->test_fees,
-          'relate_id'=>$test,
-          'status'=>"Paid",      
-          'type_charges'=>'Test',
-          'author'=>Auth::id(),   
-          'created_at'=>date("Y-m-d h:i:s"),   
-        ]);
+
+        $id=DB::getPdo()->lastinsertid();
+        $fin= new FinanceLog();
+        $fin->payment_type="OPD patient test payement";
+        $fin->bill_id=$id;
+        $fin->total=$request->test_fees;    
+        $fin->status="Paid";
+        $fin->author=Auth::id();
+        $fin->save();
+
+
       return response()->json(['success'=>"OPD Patient Revisited  Successfully !"]);   					
       }
     }
@@ -206,13 +268,11 @@ class OpdController extends Controller
           'updated_at'=>date("Y-m-d h:i:s"), 
           ]);     
         
-          DB::table('finance')
-          ->where('relate_id',$request->visit_id)
-          ->where('patient_id',$request->opd_id)
-          ->update([
-            'fees'=>$request->docter_fess,
-             'dep_id'=>$request->department,
-            ]);
+
+          FinanceLog::where('bill_id',$request->visit_id)
+          ->where('payment_type',"OPD patient revisit payement")
+          ->update(['total'=>$request->docter_fess]);
+
 
             return response()->json(['success'=>"OPD patient record updated successfully !"]);   					
       }
@@ -235,16 +295,10 @@ class OpdController extends Controller
           'description'=>$request->description,
           'updated_at'=>date("Y-m-d h:i:s"),     
           ]);     
-        
-          DB::table('finance')
-          ->where('relate_id',$request->test_id)
-          ->where('patient_id',$request->opd_id)
-          ->update([
-            'dep_id'=>$request->department,
-            'patient_id'=>$request->opd_id,
-            'fees'=>$request->test_fees,
-            'updated_at'=>date("Y-m-d h:i:s"),
-            ]);
+  
+          FinanceLog::where('bill_id',$request->test_id)
+          ->where('payment_type',"OPD patient test payement")
+          ->update(['total'=>$request->test_fees]);
 
             return response()->json(['success'=>"OPD patient record updated successfully !"]);   					
       }

@@ -32,6 +32,7 @@ class CreatePatientOperationsTable extends Migration
             $table->foreign('emp_id')->references('emp_id')->on('employees');
             $table->Biginteger('author')->unsigned();
             $table->foreign('author')->references('id')->on('users');
+            $table->string('referral_person')->nullable(); 
             $table->timestamps();
         });
     }

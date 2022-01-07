@@ -140,6 +140,18 @@
                                 <textarea name="remark"  cols="44" rows="1"  placeholder="Remark.."
                                     class="form-control">{{old('remark')}}</textarea>
                             </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Referral Person <label class="text-danger">*</label></label>
+                                <input type="text" class="form-control" name="referral_person" @if ($errors->first('referral_person')) style="border:1px solid red" @endif placeholder="Referral person.." value="{{old('referral_person')}}">
+                                {!! $errors->first('referral_person', '<small class="text-danger">:message</small>') !!}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Referral Person <label class="text-danger">*</label></label>
+                                <input type="text" class="form-control" name="referral_person"  placeholder="Referral person.." value="{{old('referral_person')}}">
+                            </div>
+
                         </div>{{-- end of col --}}
 
                     </div>{{-- end of row --}}

@@ -9,60 +9,46 @@
 
 
 @endsection
+
 @section('content')
-    <div class="card p-3">
-        <div class="btn-list ">
-            <a href="javascript:viod();" data-backdrop="static" data-toggle="modal" data-target="#create"
-                class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Appoinments</a>
 
-        </div>
-        <div class="mt-5 table-responsive">
-            <table class="table table-striped table-bordered table-sm text-nowrap w-100 dataTable no-footer" id="example">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>PID</th>
-                        <th>OPP-ID</th>
-                        <th>Patient </th>
-                        <th>Age</th>
-                        <th>Phone</th>
-                        <th> Date</th>
-                        <th> Time</th>
-                        <th> Department</th>
-                        <th> Docter</th>
-                        <th>Author</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $counter=1; @endphp
-                    @foreach ($app as $row)
-                        <tr id="row{{ $row->app_id }}">
-                            <td>{{ $counter++ }}</td>
-                            <td>{{ 'PID-T-' . $row->patient_id }}</td>
-                            <td>{{ 'OPP-N-' . $row->app_number }}</td>
-                            <td>{{ $row->p_f_name . ' ' . $row->p_l_name }}</td>
-                            <td>{{ $row->age }}</td>
-                            <td>{{ $row->phone }}</td>
-                            <td>{{ $row->date }}</td>
-                            <td>{{ $row->time }}</td>
-                            <td>{{ $row->department_name }}</td>
-                            <td>{{ $row->f_name . ' ' . $row->l_name }}</td>
-                            
-                            <td>{{ $row->email }}</td>
-                            <td>
-                                <a data-delete="{{ $row->app_id }}"
-                                    class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
-                                <a data-toggle="modal" data-target="#edit" data-id="{{ $row->app_id }}"
-                                    class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
-                            </td>
-                        </tr>
-                    @endforeach
+    <div class="column">
 
-                </tbody>
-            </table>
+
+        
+     <div class="row column">
+         <div class="col-12 mb-5">
+            <div class="btn-list ">
+                <a href="javascript:viod();" data-backdrop="static" data-toggle="modal" data-target="#create"
+                    class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Appoinments</a>
+            </div>
+         </div>
+        @foreach($app as $row)
+         <div class="col-md-4">
+         <div class="card">
+            <div class="card-body text-center">
+               
+                <div class="card-category bg-primary text-white">Dr.{{$row->f_name . ' ' . $row->l_name }} <br>{{$row->department_name }} <br> {{$row->date}}</div>
+
+                <ul class="list-unstyled leading-loose " >
+                    @foreach(helper::getappoinmentdata($row->emp_id,$row->date) as $detail)
+                    <li id="row{{$detail->app_id}}"> <small> Patient:  {{$detail->p_f_name . ' ' . $detail->p_l_name}}|{{'APP-N-'.$detail->app_number}} |Time:{{$detail->time}}
+              
+                            <i style="font-size: 16px;cursor: pointer;"  data-toggle="modal" data-target="#show" data-id="{{$detail->app_id}}" class="ti-eye text-success  show"></i>
+                            <i style="font-size: 16px;cursor: pointer;" data-delete="{{$detail->app_id}}" class="ti-trash  text-danger delete"></i>
+                            <i style="font-size: 16px;cursor: pointer;" data-toggle="modal" data-target="#edit" data-id="{{$detail->app_id}}" class="ti-pencil text-primary edit"></i>
+                 
+                    </small></li>
+                    @endforeach  
+
+                </ul>
+            </div>
         </div>
+      </div>
+     @endforeach  
     </div>
+</div>
+
 
     <div id="create" class="modal fade">
         <div class="modal-dialog modal-lg" role="document">
@@ -131,73 +117,27 @@
             </div>
         </div><!-- MODAL DIALOG -->
     </div>
-    <button class="btn btn-danger" data-toggle="modal" data-target="#print">View modal</button>
 
 
-
-    <!-- LARGE MODAL -->
-    <div id="print" class="modal fade">
+    
+    <div id="show" class="modal fade">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content ">
                 <div class="modal-header pd-x-20">
-                    <h6 class="modal-title">Message Preview</h6>
+                    <h6 class="modal-title">Appoinments Detail</h6>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body pd-20" id="DivIdToPrint">
-                   <div style="text-align: center"><img src="{{url('public/hlogo.png')}}" width="200" height="80" alt=""></div> 
-                   <h4 style="text-align: center;margin-top:4px">Morwareed Medical Complex</h4>
-                <div style="text-align: center;">
-                    <div style="height: 80px;border-bottom:1px solid black">
-                        <div style=";color: #000; width: 48%;float: left;">   
-                            <div style="text-align:left">
-                                   <p>Patient Name : <strong>Musayeb Afzali</strong></p>
-                                   <p>Age :<strong>25</strong></p>
-                                   <p>Phone Number :<strong>0782970273</strong></p>
-                               </div>
-                            </div>
-                            <div style="color: #000;width: 48%;float: right;">
-                                <div style="text-align:left">
-                                       <p>Register Date :<strong>2021-12-03</strong></p>
-                                       <p>Department :<strong>Patalogy</strong></p>
-                                       <p>Patient Register Number :<strong>PMS-TEMP-00199</strong></p>
+                <div class="modal-body pd-20">
+                    <div class="details">
 
-                                   </div>
-                                </div>  
                     </div>
-      
-                 </div>
-                 <div class="text-center" style="height:650px;border-bottom:1px solid black"><span style="margin-top:4px">Impotant Note:....</span></div>
-                   <div style="height:105px;overflow: hidden;margin-top:4px">
-                
-                    <div style="color: #000;height: 400px; width: 48%;float: left;">   
-                        <div style="">
-                               <p>Address: Opposite Haji Sahib Gul Karim Center, Next to Tribal Directorate , 1st Zone, Professor Morwarid Safi Curative Hospital</p>
-                               <p>Hospital No.:+93 78 55555 44</p>
-                               <p>Ambulance Number: +93 74 55555 44</p>
-                               <p>Email:info@pmsmedicalcomplex.com</p>
-                               <p>https://pmsmedicalcomplex.com</p>
-                           </div>
-                        </div>
-                        <div style="color: #000;height: 400px;width: 48%;float: right;text-align:right">
-                            <div style="">
-                                   <p> آدرس: قبایلو ریاست تر څنګ حاجی صیب ګل کریم مرکز ته مخامخ، اوله ناحیه ، پروفیسر مروارید صافی معالجوی روغتون</p>
-                                   <p>0093 785555544:روغتون اړیکه</p>
-                                   <p>0093 785555544:امبولانس اړیکه</p>
-                                   <p>info@pmsmedicalcomplex.com :ایمیل ادرس</p>
-                                   <p>https://pmsmedicalcomplex.com</p>
-                               </div>
-                            </div>  
-                  </div> 
+
                 </div><!-- modal-body -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
             </div>
         </div><!-- MODAL DIALOG -->
     </div>
-    <!-- LARGE MODAL CLOSED -->
 
 
 
@@ -205,7 +145,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content ">
                 <div class="modal-header pd-x-20">
-                    <h6 class="modal-title">Add Appoinments</h6>
+                    <h6 class="modal-title">Edit Appoinments</h6>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -265,7 +205,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Create Appoinment</button>
+                            <button type="submit" class="btn btn-primary">Edit</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -357,7 +297,7 @@
                 data: formData,
                 success: function(data) {
                     $(".alert").css('display', 'none');
-                    $('.table').load(document.URL + ' .table');
+                    $('.column').load(document.URL + ' .column');
                     $('#create').modal('hide');
                     $('#createform')[0].reset();
                     return $.growl.notice({
@@ -383,7 +323,7 @@
         });
         $('body').on('click', '.edit', function() {
             id = $(this).attr('data-id');
-            url = '{{ url('appoinments') }}' + '/' + id + '/' + "edit";
+            url = '{{ url("appoinments") }}' + '/' + id + '/' + "edit";
             var Hdata = "";
             $.get(url, function(data) {
                 if (data.pos != '') {
@@ -486,6 +426,21 @@
           })
               
 });
+
+    $('body').on('click', '.show', function() {
+            id = ($(this).attr('data-id'));
+            url = '{{ url("appoinments") }}/' + id;
+            var Hdata = "";
+            $.ajax({
+                type: 'get',
+                url: url,
+                success: function(data) {
+                  $('.details').html(data);
+                },
+                error: function() {}
+            })
+
+        });
 
     </script>
 @endsection

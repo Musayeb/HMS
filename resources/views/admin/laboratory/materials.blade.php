@@ -9,10 +9,12 @@
 @section('content')
     <div class="card p-3">
         <div class="btn-list ">
-            <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
-                class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Material</a>
+            @if (!empty(Helper::getpermission('_labMaterials--create')) )
+                <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
+                    class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Material</a>
+            @endif
         </div>
-        <div class="mt-5 tables">
+        <div class="mt-5 table-responsive">
             <table class="table table-striped table-bordered table-sm text-nowrap w-100 dataTable no-footer" id="example">
                 <thead>
                     <tr>
@@ -26,7 +28,9 @@
                         <th>Expiry Date</th>
                         <th>Avaliable Qty</th>
                         <th>Created Date</th>
-                        <th>Action</th>
+                        @if (!empty(Helper::getpermission('_labMaterials--delete')) &&  !empty(Helper::getpermission('_labMaterials--edit')) )
+                            <th>Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -58,10 +62,17 @@
                             @if ($mark<20 && $mark!==0)<span class="text-danger">Low stock ({{$mark}})</span>@endif</td>
 
                             <td>{{ $row->created_at }}</td>
-                            <td>
-                                <a data-delete="{{$row->ph_main_cat_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
-                                <a data-data="{{$row->m_cat_name}}" data-toggle="modal" data-target="#editdept" data-id="{{$row->ph_main_cat_id}}" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
-                            </td>
+
+                            {{-- @if (!empty(Helper::getpermission('_labMaterials--delete')) &&  !empty(Helper::getpermission('_labMaterials--edit')) )--}}
+                                <td> 
+                                    {{-- @if (!empty(Helper::getpermission('_labMaterials--delete')) ) --}}
+                                        <a data-delete="{{$row->ph_main_cat_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
+                                    {{-- @endif --}}
+                                    {{-- @if (!empty(Helper::getpermission('_labMaterials--edit')) ) --}}
+                                        <a data-data="{{$row->m_cat_name}}" data-toggle="modal" data-target="#editdept" data-id="{{$row->ph_main_cat_id}}" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
+                                    {{-- @endif --}}
+                                </td>
+                            {{-- @endif --}}
                         </tr>
                     @endforeach
 

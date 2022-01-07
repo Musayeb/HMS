@@ -6,16 +6,18 @@
 @endsection
 
 @section('content')
-<div class="pb-3">
-    <div class="float-right btn-list ">
-    <a href="{{url('employees/create/option')}}" class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Employee</a>
-    </div>
-</div>
 
-    <div class="row d-block">
+    <div class="row ">
+        <div class="col-12 mb-5">
+            <div class="pb-3">
+                <div class="float-right btn-list ">
+                    <a href="{{url('employees/create/option')}}" class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New Employee</a>
+                </div>
+            </div>
+        </div>
         @foreach ($emp as $row)
             
-        <div class=" col-xl-3 col-md-12 ">
+        <div class=" col-xl-3 col-md-6 col-sm-12 ">
             <div class="card text-center">
                 <div class="ml-auto">
                 <div class="btn-group mt-2 mr-2 mb-2 float-right">

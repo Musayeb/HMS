@@ -1,28 +1,53 @@
-<x-guest-layout>
-    <x-jet-authentication-card>
-        <x-slot name="logo">
-            <x-jet-authentication-card-logo />
-        </x-slot>
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+@extends('layouts.auth')
+@section('content')    
+
+
+
+<div class="page h-100">
+    <div class="">
+        <!-- CONTAINER OPEN -->
+        <div class="col col-login mx-auto">
+            <div class="text-center">
+                <img src="public/assets/images/brand/logo-white.png" class="header-brand-img" alt="">
+            </div>
         </div>
+        <div class="container-login100">
+            <div class="wrap-login100 p-6">
+                <form class="login100-form validate-form" method="POST" action="{{ route('password.confirm') }}">
+                    <p class="text-center">This is a secure area of the application. Please confirm your password before continuing.</p>
+                    @csrf
+                    <div class="wrap-input100 validate-input" data-validate = "Password is required" >
+                        <input class="input100" type="password" id="password" name="password"  autocomplete="current-password" placeholder="Password">
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="zmdi zmdi-lock" aria-hidden="true"></i>
+                        </span>
+                    </div>
+            
+                    <div class="container-login100-form-btn">
+                        <button  type="submit" class="login100-form-btn btn-primary">
+                            Confirm
+                        </button>
+                    </div>
+                </form>
 
-        <x-jet-validation-errors class="mb-4" />
-
-        <form method="POST" action="{{ route('password.confirm') }}">
-            @csrf
-
-            <div>
-                <x-jet-label for="password" value="{{ __('Password') }}" />
-                <x-jet-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" autofocus />
             </div>
+        </div>
+        <!-- CONTAINER CLOSED -->
+    </div>
+</div>
 
-            <div class="flex justify-end mt-4">
-                <x-jet-button class="ml-4">
-                    {{ __('Confirm') }}
-                </x-jet-button>
-            </div>
-        </form>
-    </x-jet-authentication-card>
-</x-guest-layout>
+@endsection
+
+@section('jquery')
+    {{-- <script>
+        $('#show').mousedown(function(){
+            $('#password').attr('type','text');
+        });
+        $('#show').mouseup(function(){
+            $('#password').attr('type','password');
+        });
+    </script> --}}
+@endsection
+

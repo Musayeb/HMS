@@ -163,11 +163,10 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Payment Type</th>
-                                            <th>Department</th>
-                                            <th>Fees</th>
+                                            <th>Total</th>
                                             <th>status</th>
-                                            <th>Author</th>
-                                            <th>Date</th>
+                                            <th>Create Date</th>
+                                            <th>Update Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -176,13 +175,11 @@
                                         @foreach ($finance as $item)
                                             <tr id="row{{ $item->f_id }}">
                                                 <td>{{ $counter++ }}</td>
-                                                <td>{{ $item->type_charges }}</td>
-                                                <td>{{ $item->department_name }}</td>
-                                                <td>{{ $item->fees }}</td>
+                                                <td>{{ $item->payment_type }}</td>
+                                                <td>{{ $item->total }}</td>
                                                 <td>{{ $item->status }}</td>
-                                                <td>{{ $item->email }}</td>
-                                                <td>{{ $item->date }}</td>
-                    
+                                                <td>{{ $item->created_at }}</td>
+                                                <td>{{ $item->updated_at }}</td>
                                                 <td>                               
                                                    <a href="{{route('opd.show',$item->f_id)}}" class="btn btn-success btn-sm text-white mr-2">Return Fees</a>
                                                 </td>
@@ -329,13 +326,13 @@
                     </div>
                     <div class="form-group">
                         <label>Test</label>
-                        <select  class="form-control " id="test_name" name="test_type">
+                        <select  class="form-control test_name" name="test_type">
                             <option value="" selected disabled>Select Test</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Test Fees</label>
-                        <input  id="test_fees" readonly class="form-control" name="test_fees">
+                        <input readonly class="test_fees form-control" name="test_fees">
                     </div>
                     <div class="form-group">
                         <label>Description</label>
@@ -386,7 +383,7 @@
                     </div>
                     <div class="form-group">
                         <label>Test Fees</label>
-                        <input   readonly class="form-control test_fees" name="test_fees">
+                        <input   readonly class="form-control test_fees" id="test_fees" name="test_fees">
                     </div>
                     <div class="form-group">
                         <label>Description</label>
@@ -472,7 +469,7 @@
     })
 
  });
- $('#test_name').change(function() {
+ $('.test_name').change(function() {
         id = ($(this).val());
         url = '{{ url("get_test_fee") }}/' + id;
         var Hdata = "";
@@ -481,9 +478,9 @@
             url: url,
             success: function(data) {
                 if (data != '') {
-                    $("#test_fees").val(data[0].fees);  
+                    $(".test_fees").val(data[0].fees);  
                 } else {
-                    $("#test_fees").val('Fees is Empty');
+                    $(".test_fees").val('Fees is Empty');
                 }
             },
             error: function() {}

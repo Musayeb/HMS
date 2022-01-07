@@ -11,10 +11,12 @@
 @section('content')
 <div class="card p-3">
     <div class="btn-list ">
-        <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
-            class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New</a>
+        @if (!empty(Helper::getpermission('_surgery&Delivery--create')))
+            <a href="javascript:viod();" data-toggle="modal" data-target="#createdept"
+                class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Add New</a>
+        @endif
     </div>
-    <div class="mt-5 tables">
+    <div class="mt-5 table-responsive">
         <table class="table table-striped table-bordered table-sm text-nowrap w-100 dataTable no-footer" id="example">
             <thead>
                 <tr>
@@ -28,8 +30,11 @@
                     <th>Author</th>
                     <th>Date</th>
                     <th>Time</th>
+                    <th>referral_person</th>
                     <th>Created Date</th>
-                    <th>Action</th>
+                    @if (!empty(Helper::getpermission('_surgery&Delivery--delete')) ||  (!empty(Helper::getpermission('_surgery&Delivery--edit'))) )
+                        <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -51,7 +56,7 @@
                             @php $proc=helper::getprocedure($row->patient_s_del_pro_id) @endphp
                             {{$proc[0]->procedure_name}}
                             @endif
-                            @if (empty($row->surgery_id) && empty($row->procedure_id))
+                            @if (empty($row->surgery_id) || empty($row->procedure_id))
                                 {{'Normal Delivery'}}
                             @endif
                         </td>
@@ -60,11 +65,18 @@
                         <td>{{ $row->date }}</td>
                         <td>{{$newDateTime = date('h:i A', strtotime($row->time))}}
                         </td>
+                        <td>{{ $row->referral_person }}</td>
                         <td>{{ $row->created_at }}</td>
-                        <td>
-                            <a data-delete="{{$row->procedure_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
-                            <a data-dep="{{$row->dep_id}}" data-pro="{{$row->procedure_name}}" data-toggle="modal" data-target="#editdept" data-id="{{$row->procedure_id}}" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
-                        </td>
+                        @if (!empty(Helper::getpermission('_surgery&Delivery--delete')) ||  !empty(Helper::getpermission('_surgery&Delivery--edit')))
+                            <td>
+                                @if (!empty(Helper::getpermission('_surgery&Delivery--delete')) )
+                                    <a data-delete="{{$row->procedure_id}}" class="btn btn-danger btn-sm text-white mr-2 delete">Delete</a>
+                                @endif
+                                @if (!empty(Helper::getpermission('_surgery&Delivery--edit')) )
+                                    <a data-dep="{{$row->dep_id}}" data-pro="{{$row->procedure_name}}" data-toggle="modal" data-target="#editdept" data-id="{{$row->procedure_id}}" class="btn btn-info btn-sm text-white mr-2 edit">Edit</a>
+                                @endif
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
 
@@ -135,7 +147,11 @@
                     </div>
                     <div class="form-group">
                         <label>Time</label>
-                       <input type="time" name="time" class="form-control "  >
+                       <input type="time" name="time" class="form-control "   >
+                    </div>
+                    <div class="form-group">
+                        <label>Referral Person</label>
+                       <input type="text" name="referral_person" class="form-control "  placeholder="Referral person">
                     </div>
                     <div class="modal-footer">
                        <button type="submit" class="btn btn-primary">Add</button>

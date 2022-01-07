@@ -73,10 +73,20 @@
                                 placeholder="Phone Number..">
                             {!! $errors->first('phone_number', '<small class="text-danger">:message</small>') !!}
                         </div>
+                        <div class="form-group">
+                            <label >Relationship <label class="text-danger">*</label></label>
+                            <input type="text" value="{{old('relationship')}}"  class="form-control" @if ($errors->first('relationship')) style="border:1px solid red" @endif name="relationship" placeholder="Relationship..">
+                            {!! $errors->first('relationship', '<small class="text-danger">:message</small>') !!}
+                        </div>
 
                     </div>{{-- end of row --}}
                     <div class="col-lg-4">
-
+                        <div class="form-group">
+                            <label >Emergency Contact <label class="text-danger">*</label></label>
+                            <input type="phone" value="{{ old('emergency_contact') }}" class="form-control phone" @if ($errors->first('emergency_contact')) style="border:1px solid red" @endif
+                                name="emergency_contact" placeholder="Phone Number..">
+                            {!! $errors->first('emergency_contact', '<small class="text-danger">:message</small>') !!}
+                        </div>
                         <div class="form-group">
                             <label >Email Address <label class="text-danger">*</label></label>
                             <input type="email" class="form-control " value="{{ old('email') }}" name="email" @if ($errors->first('email')) style="border:1px solid red" @endif
@@ -152,17 +162,16 @@
                             {!! $errors->first('date_of_join', '<small class="text-danger">:message</small>') !!}
                         </div>
                         <div class="form-group">
-                            <label >Emergency Contact <label class="text-danger">*</label></label>
-                            <input type="phone" value="{{ old('emergency_contact') }}" class="form-control phone" @if ($errors->first('emergency_contact')) style="border:1px solid red" @endif
-                                name="emergency_contact" placeholder="Phone Number..">
-                            {!! $errors->first('emergency_contact', '<small class="text-danger">:message</small>') !!}
+                            <label >End of Contract <label class="text-danger">*</label></label>
+                            <input type="Date" class="form-control" value="{{ old('end_of_contract') }}"
+                                name="end_of_contract" @if ($errors->first('end_of_contract')) style="border:1px solid red" @endif>
+                            {!! $errors->first('end_of_contract', '<small class="text-danger">:message</small>') !!}
                         </div>
-                        
                         <div class="form-group">
-                            <label >Relationship <label class="text-danger">*</label></label>
-                            <input type="text" value="{{old('relationship')}}"  class="form-control" @if ($errors->first('relationship')) style="border:1px solid red" @endif name="relationship" placeholder="Relationship..">
-                            {!! $errors->first('relationship', '<small class="text-danger">:message</small>') !!}
+                            <label>TIN Number</label>
+                            <input type="text" class="form-control" value="{{ old('tin_number') }}"name="tin_number" placeholder="TIN Number">
                         </div>
+                                           
                         <div class="form-group">
                             <label >Photo<small>(Optional) (MAX 2MB)</small></label>
                             <input type="file" name="photo" class="dropify" data-max-file-size="2M" />
@@ -201,19 +210,17 @@
 @section('jquery')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
     <script src="{{asset('public/assets/plugins/fileuploads/js/fileupload.js')}}"></script>
-    {{-- <script src="{{asset('public/assets/plugins/fileuploads/js/file-upload.js')}}"></script> --}}
+    <script src="{{asset('public/assets/plugins/fileuploads/js/file-upload.js')}}"></script>
     <script>
-        $('.dropify').dropify({
+     $('.dropify').dropify({
             messages: {
-                'default': 'Drag and drop a file here or click',
-                'replace': 'Drag and drop or click to replace',
-                'remove': 'Remove',
-                'error': 'Ooops, something wrong appended.'
+            'default': '',
+            'error':   'Ooops, something wrong happended.'
             },
             error: {
                 'fileSize': 'The file size is too big (2M max).'
             },
-            height:73,
+            height:51,
         });
             
         $(document).ready(function() {

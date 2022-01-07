@@ -13,7 +13,9 @@
 <div class="card">
     <div class="ml-auto d-block  m-3">
         <div class="float-right btn-list ">
-        <a data-toggle="modal" data-backdrop="static" data-target="#modal" class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Process Payroll</a>
+            @if (!empty(Helper::getpermission('_payroll--create')))
+                <a data-toggle="modal" data-backdrop="static" data-target="#modal" class="pull-right btn btn-primary d-inline"><i class="ti-plus"></i> &nbsp;Process Payroll</a>
+            @endif
         </div>
     </div>
 
@@ -57,10 +59,12 @@
                         <span class="badge badge-success">{{$row->status}}</span>    
                         @endif
                     </td>
-                    <td>
-                        <a href="javascript:void(0);" data-backdrop="static" data-target="#edit" data-toggle="modal" data-id="{{$row->pay_id}}" class="edit_pay"><i class="fa fa-pencil-square-o fa-lg" ></i></a>
-                        <a href="javascript:void(0);"><i class="fa fa-trash-o fa-lg"></i><a>
 
+                    <td>
+                        @if (!empty(Helper::getpermission('_payroll--edit')))
+                            <a href="javascript:void(0);" data-backdrop="static" data-target="#edit" data-toggle="modal" data-id="{{$row->pay_id}}" class="edit_pay"><i class="fa fa-pencil-square-o fa-lg" ></i></a>
+                        @endif
+                            <a href="javascript:void(0);"><i class="fa fa-trash-o fa-lg"></i><a>
                     </td>
                 </tr>     
                 @endforeach

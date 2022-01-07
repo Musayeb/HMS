@@ -28,6 +28,7 @@ class CreateOpdsTable extends Migration
             $table->date('date')->nullable();
             $table->Biginteger('author')->unsigned();
             $table->foreign('author')->references('id')->on('users');
+            $table->string('referral_person')->nullable();    
             $table->timestamps();
         });
     }

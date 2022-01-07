@@ -19,6 +19,7 @@ class CreateEmployeesTable extends Migration
             $table->Biginteger('dep_id')->unsigned();
             $table->foreign('dep_id')->references('dep_id')->on('departments');
             $table->string("position");
+            $table->string("tin_number");
             $table->integer("fees")->nullable();
             $table->string("f_name");
             $table->string("l_name");
@@ -29,6 +30,7 @@ class CreateEmployeesTable extends Migration
             $table->string("m_status",20);
             $table->date("date_of_birth");
             $table->date("date_of_join");
+            $table->date("end_of_contract");
             $table->string("phone_number",11);
             $table->string("email");
             $table->string("photo")->nullable();

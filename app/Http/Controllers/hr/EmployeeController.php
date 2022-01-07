@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Departments;
 use App\Models\Employee;
+use App\Models\Payroll;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -56,6 +57,8 @@ class EmployeeController extends Controller
                 "cv" => "mimes:pdf|max:2048",
                 "contract" => "mimes:pdf|max:2048",
                 'photo' => 'image|mimes:jpeg,png,jpg,|max:2048',
+                'tin_number'=>"required",
+                'end_of_contract'=>"required",
                 
                 ]);
         }else{
@@ -80,12 +83,13 @@ class EmployeeController extends Controller
                 "cv" => "mimes:pdf|max:2048",
                 "contract" => "mimes:pdf|max:2048",
                 'photo' => 'image|mimes:jpeg,png,jpg,|max:2048',
-                
+                'tin_number'=>"required",
+                'end_of_contract'=>"required",
+
                 ]);
         }
 
-            
-            
+        
             if($datavalide==true){
                 $check=DB::table('employees')
                 ->select(DB::raw('Max(emp_identify_id)as max'))->get();
@@ -119,6 +123,9 @@ class EmployeeController extends Controller
                 $emp->date_of_join=$request->date_of_join;
                 $emp->phone_number=$request->phone_number;
                 $emp->email=$request->email;
+                $emp->tin_number=$request->tin_number;
+                $emp->end_of_contract=$request->end_of_contract;
+                $emp->email=$request->email;
                 $emp->current_address=$request->current_address;
                 $emp->permanent_address=$request->permenent_address;
                 $emp->salary=$request->salary;
@@ -140,7 +147,12 @@ class EmployeeController extends Controller
     {
      $emp=Employee::join('departments','departments.dep_id','employees.dep_id')->where('emp_id',$id)->groupBy('employees.emp_id')->get();
      $emp=$emp[0];
-     return view('admin.employee.show',compact('emp'));   
+
+     $sum=Payroll::where('emp_id',$id)->sum('net_salary');
+     $pay=Payroll::where('emp_id',$id)->orderBy('month_year','DESC')->paginate(1);
+
+
+     return view('admin.employee.show',compact('emp','sum','pay'));   
     }
 
     public function download($id,$type)

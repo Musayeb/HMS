@@ -1,37 +1,52 @@
-<x-guest-layout>
-    <x-jet-authentication-card>
-        <x-slot name="logo">
-            <x-jet-authentication-card-logo />
-        </x-slot>
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-        </div>
+@extends('layouts.auth')
+@section('content')    
 
-        @if (session('status') == 'verification-link-sent')
-            <div class="mb-4 font-medium text-sm text-green-600">
-                {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+
+
+<div class="page h-100">
+    <div class="">
+        <div class="container-login100">
+            <div class="wrap-login100 p-6">
+                <div class="col col-login mx-auto mb-5">
+					<div class="text-center">
+						<img src="{{asset('public/sarey.png')}}" class="header-brand-img" alt="">
+					</div>
+				</div>
+                <form class="login100-form validate-form" method="POST" action="{{ route('verification.send') }}">
+                    @csrf
+                    <x-jet-validation-errors class="mb-4 text-danger text-center " />  
+                    @if (session('status'))
+                          <div class="mb-4 font-medium text-sm text-green-600 text-success text-center">
+                              {{ session('status') }}
+                          </div>
+                    @endif
+
+                    <p class="text-center">Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.</p>
+            
+                
+                    <div class="container-login100-form-btn">
+                        <button href="#" type="submit" class="login100-form-btn btn-primary">
+                            Resend Verification Email
+                        </button>
+                    
+                        <div class=" mt-5">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="text-sm text-gray-600 hover:text-gray-900">
+                                    {{ __('Logout') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </form>
+                 
+                
+               
             </div>
-        @endif
-
-        <div class="mt-4 flex items-center justify-between">
-            <form method="POST" action="{{ route('verification.send') }}">
-                @csrf
-
-                <div>
-                    <x-jet-button type="submit">
-                        {{ __('Resend Verification Email') }}
-                    </x-jet-button>
-                </div>
-            </form>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-
-                <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900">
-                    {{ __('Logout') }}
-                </button>
-            </form>
         </div>
-    </x-jet-authentication-card>
-</x-guest-layout>
+        <!-- CONTAINER CLOSED -->
+    </div>
+</div>
+
+@endsection
